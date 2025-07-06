@@ -1,9 +1,9 @@
-# assembler
+# assembler-rs
 
 ## Development
 
-To start developing, you must first export the environment variable `FACTORIO_PATH`, 
-being your [application path](https://wiki.factorio.com/Application_directory). For example:
+To start developing, you must first export the environment variables `FACTORIO_PATH` and `FACTORIO_BIN_PATH`. For example:
 ```bash
 export FACTORIO_PATH="~/.factorio/"
+export FACTORIO_BIN_PATH="Factorio/bin/x64"
 ```
