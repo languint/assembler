@@ -1,6 +1,5 @@
 use std::{
     env, fs,
-    os::unix::process,
     path::Path,
     process::{Command, exit},
 };
