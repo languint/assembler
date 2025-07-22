@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use owo_colors::{colors::*, AnsiColors, DynColors, OwoColorize};
+use owo_colors::{AnsiColors, DynColors, OwoColorize, colors::*};
 #[derive(Parser, Debug)]
 pub struct Cli {
     #[command(subcommand)]

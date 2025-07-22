@@ -27,7 +27,7 @@ fn start_factorio(port: u16) -> Result<(), String> {
         )
         .as_str(),
         0,
-        Some(cli::CLI_GREEN_HEADER)
+        Some(cli::CLI_GREEN_HEADER),
     );
     Ok(())
 }
