@@ -45,7 +45,7 @@ pub async fn start_command(port: u16) -> Result<(), String> {
     let recv_task = tokio::spawn(async move {
         loop {
             let msg = ipc_recv.receive().await?;
-            
+
             let mut state = handshake_state_recv.lock().await;
             match &*state {
                 ipc::HandshakeState::Init => {
@@ -81,7 +81,6 @@ pub async fn start_command(port: u16) -> Result<(), String> {
         }
     });
 
-    // Wait for tasks (or handle shutdown logic)
     let _ = tokio::try_join!(recv_task, send_task).map_err(|e| format!("Task failed: {}", e))?;
 
     Ok(())

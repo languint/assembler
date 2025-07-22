@@ -6,6 +6,7 @@ use crate::cli;
 #[derive(Clone)]
 pub struct Ipc {
     sock: Arc<UdpSocket>,
+    #[allow(unused)]
     pub(crate) port: u16,
 }
 
@@ -15,7 +16,7 @@ impl Ipc {
         let sock = Arc::new(
             UdpSocket::bind(&localhost_addr)
                 .await
-                .map_err(|e| format!("Failed to bind UDP socket: {}", e))?
+                .map_err(|e| format!("Failed to bind UDP socket: {}", e))?,
         );
 
         cli::log_header(
