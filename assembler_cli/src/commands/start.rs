@@ -45,8 +45,7 @@ pub async fn start_command(port: u16) -> Result<(), String> {
     let recv_task = tokio::spawn(async move {
         loop {
             let msg = ipc_recv.receive().await?;
-            println!("Received message: {}", msg);
-
+            
             let mut state = handshake_state_recv.lock().await;
             match &*state {
                 ipc::HandshakeState::Init => {
@@ -79,7 +78,6 @@ pub async fn start_command(port: u16) -> Result<(), String> {
     let send_task = tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
             ipc_send.send(&msg).await.unwrap();
-            println!("Sent message: {}", msg);
         }
     });
 
