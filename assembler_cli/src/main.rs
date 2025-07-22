@@ -5,6 +5,7 @@ use crate::cli::{Cli, Commands};
 mod cli;
 mod commands;
 mod lua_mod;
+mod ipc;
 
 #[tokio::main]
 async fn main() -> Result<(), String> {

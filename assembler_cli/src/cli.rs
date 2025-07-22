@@ -12,11 +12,11 @@ pub enum Commands {
         version: String,
         #[arg(short, long, default_value = "false")]
         launch: bool,
-        #[arg(short, long, default_value = "42434")]
+        #[arg(short, long, default_value = "8080")]
         port: u16,
     },
     Start {
-        #[arg(short, long, default_value = "42434")]
+        #[arg(short, long, default_value = "8080")]
         port: u16,
     },
 }

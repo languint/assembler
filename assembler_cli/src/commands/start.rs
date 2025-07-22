@@ -1,8 +1,10 @@
 use std::process::{Command, Stdio};
+use std::sync::Arc;
 
-use tokio::net::UdpSocket;
+use crate::ipc::{self, Ipc};
 
 use crate::cli;
+use tokio::sync::{Mutex, mpsc};
 
 fn start_factorio(port: u16) -> Result<(), String> {
     let factorio_steam_id = 427520;
@@ -10,8 +12,7 @@ fn start_factorio(port: u16) -> Result<(), String> {
     let factorio_pid = Command::new("steam")
         .arg(format!(
             "steam://run/{}//--enable-lua-udp%20{}",
-            factorio_steam_id,
-            port
+            factorio_steam_id, port
         ))
         .stdout(Stdio::null()) // Suppress output
         .spawn()
@@ -20,38 +21,70 @@ fn start_factorio(port: u16) -> Result<(), String> {
 
     cli::log_header(
         "PEX",
-        format!("Factorio started with PID `{}`, and port `{}`", factorio_pid, port).as_str(),
+        format!(
+            "Factorio started with PID `{}`, and port `{}`",
+            factorio_pid, port
+        )
+        .as_str(),
         0,
     );
     Ok(())
 }
 
 pub async fn start_command(port: u16) -> Result<(), String> {
-    let udp_server = tokio::spawn(async move {
-        let localhost_addr = format!("127.0.0.1:{}", port);
-        let sock = UdpSocket::bind(&localhost_addr)
-            .await
-            .map_err(|e| format!("Failed to bind UDP socket: {}", e))?;
-        let mut buf = [0; 1024];
+    let ipc = Ipc::new(port, port + 1).await?;
+    start_factorio(port + 1)?;
 
-        cli::log_header(
-            "UDP",
-            format!("Socket listening on {}", localhost_addr).as_str(),
-            0,
-        );
+    let (tx, mut rx) = mpsc::unbounded_channel::<String>();
+
+    let handshake_state = Arc::new(Mutex::new(ipc::HandshakeState::Init));
+    let handshake_state_recv = handshake_state.clone();
+    let tx_recv = tx.clone();
+
+    let ipc_recv = ipc.clone();
+    let recv_task = tokio::spawn(async move {
         loop {
-            let (len, addr) = sock
-                .recv_from(&mut buf)
-                .await
-                .map_err(|e| format!("Failed to receive data: {}", e))?;
-            println!("{:?} bytes received from {:?}", len, addr);
-            println!("Data: {}", String::from_utf8_lossy(&buf[..len]));
+            let msg = ipc_recv.receive().await?;
+            println!("Received message: {}", msg);
+
+            let mut state = handshake_state_recv.lock().await;
+            match &*state {
+                ipc::HandshakeState::Init => {
+                    if msg.trim() == "ACK" {
+                        cli::log_header("IPC-HANDSHAKE", "Recieved ACK, sending ACK", 0);
+                        tx_recv
+                            .send(ipc::HANDSHAKE_ACK_MESSAGE.to_string())
+                            .unwrap();
+
+                        *state = ipc::HandshakeState::Acked;
+                    }
+                }
+                ipc::HandshakeState::Acked => {
+                    if msg.trim() == "OK" {
+                        cli::log_header("IPC-HANDSHAKE", "Recieved OK, sending OK!", 0);
+                        tx_recv.send(ipc::HANDSHAKE_OK_MESSAGE.to_string()).unwrap();
+
+                        *state = ipc::HandshakeState::Ready;
+                        cli::log_header("IPC-HANDSHAKE", "OK-OK, READY!", 0);
+                    }
+                }
+                ipc::HandshakeState::Ready => {}
+            }
         }
         #[allow(unreachable_code)]
         Ok::<(), String>(())
     });
 
-    start_factorio(port + 1)?;
+    let ipc_send = ipc.clone();
+    let send_task = tokio::spawn(async move {
+        while let Some(msg) = rx.recv().await {
+            ipc_send.send(&msg).await.unwrap();
+            println!("Sent message: {}", msg);
+        }
+    });
 
-    udp_server.await.unwrap()
+    // Wait for tasks (or handle shutdown logic)
+    let _ = tokio::try_join!(recv_task, send_task).map_err(|e| format!("Task failed: {}", e))?;
+
+    Ok(())
 }
