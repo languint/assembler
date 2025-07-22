@@ -10,11 +10,15 @@ mod lua_mod;
 async fn main() -> Result<(), String> {
     let cli = Cli::parse();
 
-    match cli.command {
+    let res = match cli.command {
         Commands::Package { version, launch } => {
-            commands::package::package_command(version, launch).await?
+            commands::package::package_command(version, launch).await
         }
-        Commands::Start => commands::start::start_command().await?,
+        Commands::Start => commands::start::start_command().await,
+    };
+
+    if let Err(e) = res {
+        cli::log_error("ERR", &e, 0);
     }
 
     Ok(())

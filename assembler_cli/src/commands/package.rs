@@ -1,11 +1,16 @@
 use std::{env, path::Path, process::Command};
 
-use crate::{commands, lua_mod};
+use crate::{cli, commands, lua_mod};
 
 pub async fn package_command(version: String, launch: bool) -> Result<(), String> {
-    println!("Packaging mod with version: {}...", version);
-    if let Err(e) = lua_mod::update_mod_version(&version) {
-        return Err(format!("Failed to update mod version: {}", e));
+    cli::log_header(
+        "PKG",
+        format!("Starting packaging process for assembler `{}`", version).as_str(),
+        0,
+    );
+
+    if let Err(e) = lua_mod::migrate_mod_version(&version) {
+        return Err(format!("Failed to migrate mod version: {}", e));
     }
 
     let packaged_mod_name = format!("assembler_{}.zip", version);
@@ -15,11 +20,15 @@ pub async fn package_command(version: String, launch: bool) -> Result<(), String
         .arg(&packaged_mod_name)
         .arg("mod")
         .output()
-        .expect("Failed to execute zip command");
+        .map_err(|_| "Failed to execute zip command")?;
 
     match zip_command.status {
         status if status.success() => {
-            println!("Mod packaged successfully as {}", packaged_mod_name)
+            cli::log_header(
+                "PKG",
+                format!("Mod packaged successfully as: `{}`", packaged_mod_name).as_str(),
+                4,
+            );
         }
         _ => {
             return Err(format!(
@@ -30,50 +39,39 @@ pub async fn package_command(version: String, launch: bool) -> Result<(), String
     }
 
     let factorio_path =
-        env::var("FACTORIO_PATH").expect("FACTORIO_PATH environment variable is not set.");
+        env::var("FACTORIO_PATH").map_err(|_| "FACTORIO_PATH environment variable is not set.")?;
 
     let mods_path = Path::new(&factorio_path).join("mods");
 
-    let copy_command = Command::new("cp")
+    let copy_command = Command::new("mv")
         .arg(&packaged_mod_name)
         .arg(&mods_path)
         .output()
-        .expect("Failed to execute copy command");
+        .map_err(|_| "Failed to execute move command")?;
 
     match copy_command.status {
         status if status.success() => {
-            println!(
-                "Mod copied to Factorio mods directory: {}",
-                mods_path.display()
+            cli::log_header(
+                "PKG",
+                format!(
+                    "Mod moved to Factorio mods directory: `{}`",
+                    mods_path.display()
+                )
+                .as_str(),
+                4,
             );
         }
         _ => {
             return Err(format!(
-                "Failed to copy mod: {}",
+                "Failed to move mod: {}",
                 String::from_utf8_lossy(&copy_command.stderr)
             ));
         }
     }
 
-    let remove_command = Command::new("rm")
-        .arg(&packaged_mod_name)
-        .output()
-        .expect("Failed to execute remove command");
-    match remove_command.status {
-        status if status.success() => {
-            println!("Temporary packaged mod file removed.");
-            if launch {
-                println!("Launching Factorio...");
-                commands::start::start_command().await?
-            }
-
-            Ok(())
-        }
-        _ => {
-            return Err(format!(
-                "Failed to remove temporary packaged mod file: {}",
-                String::from_utf8_lossy(&remove_command.stderr)
-            ));
-        }
+    if launch {
+        cli::log_header("PKG", "Launching Factorio through Steam", 4);
+        commands::start::start_command().await?
     }
+    Ok(())
 }

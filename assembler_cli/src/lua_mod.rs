@@ -2,6 +2,8 @@ use std::{fs, path::Path};
 
 use serde::{Deserialize, Serialize};
 
+use crate::cli;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ModInfo {
     name: String,
@@ -34,12 +36,19 @@ pub fn write_info_json(info: &ModInfo) -> Result<(), String> {
     Ok(())
 }
 
-pub fn update_mod_version(version: &str) -> Result<(), String> {
+pub fn migrate_mod_version(version: &str) -> Result<(), String> {
     let mut info = load_info_json()?;
     info.version = version.to_string();
 
-    write_info_json(&info)?;
-    println!("Updated mod info to version: {}", version);
+    if let Err(err) = write_info_json(&info) {
+        return Err(format!("Failed to write updated info.json: {}", err));
+    };
+
+    cli::log_header(
+        "PKG",
+        format!("Successfully migrated assembler version to `{}`", version).as_str(),
+        4,
+    );
 
     Ok(())
 }
