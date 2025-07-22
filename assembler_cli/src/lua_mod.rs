@@ -48,6 +48,7 @@ pub fn migrate_mod_version(version: &str) -> Result<(), String> {
         "PKG",
         format!("Successfully migrated assembler version to `{}`", version).as_str(),
         4,
+        Some(cli::CLI_YELLOW_HEADER)
     );
 
     Ok(())

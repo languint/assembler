@@ -7,6 +7,7 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
         "PKG",
         format!("Starting packaging process for assembler `{}`", version).as_str(),
         0,
+        Some(cli::CLI_YELLOW_HEADER),
     );
 
     if let Err(e) = lua_mod::migrate_mod_version(&version) {
@@ -28,6 +29,7 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
                 "PKG",
                 format!("Mod packaged successfully as: `{}`", packaged_mod_name).as_str(),
                 4,
+                Some(cli::CLI_YELLOW_HEADER),
             );
         }
         _ => {
@@ -59,6 +61,7 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
                 )
                 .as_str(),
                 4,
+                Some(cli::CLI_YELLOW_HEADER),
             );
         }
         _ => {
@@ -70,7 +73,12 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
     }
 
     if launch {
-        cli::log_header("PKG", "Launching Factorio through Steam", 4);
+        cli::log_header(
+            "PKG",
+            "Launching Factorio through Steam",
+            4,
+            Some(cli::CLI_YELLOW_HEADER),
+        );
         commands::start::start_command(port).await?
     }
     Ok(())

@@ -27,6 +27,7 @@ fn start_factorio(port: u16) -> Result<(), String> {
         )
         .as_str(),
         0,
+        Some(cli::CLI_GREEN_HEADER)
     );
     Ok(())
 }
@@ -50,7 +51,12 @@ pub async fn start_command(port: u16) -> Result<(), String> {
             match &*state {
                 ipc::HandshakeState::Init => {
                     if msg.trim() == "ACK" {
-                        cli::log_header("IPC-HANDSHAKE", "Recieved ACK, sending ACK", 0);
+                        cli::log_header(
+                            "IPC-HANDSHAKE",
+                            "Recieved ACK, sending ACK",
+                            0,
+                            Some(cli::CLI_PURPLE_HEADER),
+                        );
                         tx_recv
                             .send(ipc::HANDSHAKE_ACK_MESSAGE.to_string())
                             .unwrap();
@@ -60,11 +66,21 @@ pub async fn start_command(port: u16) -> Result<(), String> {
                 }
                 ipc::HandshakeState::Acked => {
                     if msg.trim() == "OK" {
-                        cli::log_header("IPC-HANDSHAKE", "Recieved OK, sending OK!", 0);
+                        cli::log_header(
+                            "IPC-HANDSHAKE",
+                            "Recieved OK, sending OK!",
+                            0,
+                            Some(cli::CLI_PURPLE_HEADER),
+                        );
                         tx_recv.send(ipc::HANDSHAKE_OK_MESSAGE.to_string()).unwrap();
 
                         *state = ipc::HandshakeState::Ready;
-                        cli::log_header("IPC-HANDSHAKE", "OK-OK, READY!", 0);
+                        cli::log_header(
+                            "IPC-HANDSHAKE",
+                            "OK-OK, READY!",
+                            0,
+                            Some(cli::CLI_PURPLE_HEADER),
+                        );
                     }
                 }
                 ipc::HandshakeState::Ready => {}

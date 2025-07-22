@@ -23,6 +23,7 @@ impl Ipc {
             "IPC",
             format!("IPC socket listening on {}", localhost_addr).as_str(),
             0,
+            Some(cli::CLI_BLUE_HEADER),
         );
 
         let remote_addr = format!("127.0.0.1:{}", remote_port);
@@ -34,6 +35,7 @@ impl Ipc {
             "IPC",
             format!("Connected to remote address {}", remote_addr).as_str(),
             0,
+            Some(cli::CLI_BLUE_HEADER),
         );
 
         Ok(Ipc { port, sock })
@@ -44,7 +46,6 @@ impl Ipc {
             .send(message.as_bytes())
             .await
             .map_err(|e| format!("Failed to send message: {}", e))?;
-        cli::log_header("IPC", &format!("Sent message: {}", message), 0);
         Ok(())
     }
 
@@ -56,7 +57,6 @@ impl Ipc {
             .await
             .map_err(|e| format!("Failed to receive data: {}", e))?;
         let message = String::from_utf8_lossy(&buf[..len]).to_string();
-        cli::log_header("IPC", &format!("Received message: {}", message), 0);
         Ok(message)
     }
 }

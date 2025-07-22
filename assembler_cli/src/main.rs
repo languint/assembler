@@ -21,7 +21,7 @@ async fn main() -> Result<(), String> {
     };
 
     if let Err(e) = res {
-        cli::log_error("ERR", &e, 0);
+        cli::log_error("ERR", &e, 0, Some(cli::CLI_RED_HEADER));
     }
 
     Ok(())
