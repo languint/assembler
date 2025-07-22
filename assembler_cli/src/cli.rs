@@ -11,6 +11,8 @@ pub enum Commands {
     Package {
         #[arg(short, long, default_value = "0.1.0")]
         version: String,
+        #[arg(short, long, default_value = "true")]
+        launch: bool,
     },
     Start,
 }

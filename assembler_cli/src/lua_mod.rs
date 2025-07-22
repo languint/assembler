@@ -3,7 +3,7 @@ use std::{fs, path::Path};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-struct ModInfo {
+pub struct ModInfo {
     name: String,
     version: String,
     title: String,
