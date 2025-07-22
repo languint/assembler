@@ -11,10 +11,10 @@ async fn main() -> Result<(), String> {
     let cli = Cli::parse();
 
     let res = match cli.command {
-        Commands::Package { version, launch } => {
-            commands::package::package_command(version, launch).await
+        Commands::Package { version, launch, port } => {
+            commands::package::package_command(version, launch, port).await
         }
-        Commands::Start => commands::start::start_command().await,
+        Commands::Start { port} => commands::start::start_command(port).await,
     };
 
     if let Err(e) = res {

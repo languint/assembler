@@ -2,7 +2,7 @@ use std::{env, path::Path, process::Command};
 
 use crate::{cli, commands, lua_mod};
 
-pub async fn package_command(version: String, launch: bool) -> Result<(), String> {
+pub async fn package_command(version: String, launch: bool, port: u16) -> Result<(), String> {
     cli::log_header(
         "PKG",
         format!("Starting packaging process for assembler `{}`", version).as_str(),
@@ -71,7 +71,7 @@ pub async fn package_command(version: String, launch: bool) -> Result<(), String
 
     if launch {
         cli::log_header("PKG", "Launching Factorio through Steam", 4);
-        commands::start::start_command().await?
+        commands::start::start_command(port).await?
     }
     Ok(())
 }

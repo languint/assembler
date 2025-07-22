@@ -12,8 +12,13 @@ pub enum Commands {
         version: String,
         #[arg(short, long, default_value = "false")]
         launch: bool,
+        #[arg(short, long, default_value = "42434")]
+        port: u16,
     },
-    Start,
+    Start {
+        #[arg(short, long, default_value = "42434")]
+        port: u16,
+    },
 }
 
 pub fn log_header(header: &str, message: &str, depth: u8) {
