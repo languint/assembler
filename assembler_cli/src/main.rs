@@ -94,7 +94,10 @@ async fn start_command() -> Result<(), String> {
         let mut buf = [0; 1024];
 
         loop {
-            let (len, addr) = sock.recv_from(&mut buf).await.map_err(|e| format!("Failed to receive data: {}", e))?;
+            let (len, addr) = sock
+                .recv_from(&mut buf)
+                .await
+                .map_err(|e| format!("Failed to receive data: {}", e))?;
             println!("{:?} bytes received from {:?}", len, addr);
             println!("Data: {}", String::from_utf8_lossy(&buf[..len]));
         }
@@ -104,7 +107,7 @@ async fn start_command() -> Result<(), String> {
 
     Command::new("steam")
         .arg(format!(
-            "steam://run/{}//--enable-lua-udp%2012345",
+            "steam://run/{}//--enable-lua-udp%2012346",
             factorio_steam_id
         ))
         .spawn()
