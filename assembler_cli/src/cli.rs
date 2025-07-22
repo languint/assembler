@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use owo_colors::OwoColorize;
 
 #[derive(Parser, Debug)]
 pub struct Cli {
