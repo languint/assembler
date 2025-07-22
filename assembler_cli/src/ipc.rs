@@ -50,7 +50,7 @@ impl Ipc {
     }
 
     pub async fn receive(&self) -> Result<String, String> {
-        let mut buf = [0; 1024];
+        let mut buf = [0; 65536]; // 64KB
         let len = self
             .sock
             .recv(&mut buf)
