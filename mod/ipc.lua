@@ -1,5 +1,6 @@
 local ipc = {}
 ipc.PORT = 8080
+ipc.HANDSHAKE_COMPLETED = false
 
 function ipc:send(message)
     if helpers then

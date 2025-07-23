@@ -81,3 +81,14 @@ pub const HANDSHAKE_OK_MESSAGE: &str = r#"
         "msg": "OK"
     }
 "#;
+
+#[derive(Debug, serde::Deserialize)]
+pub struct IPCMessage {
+    pub r#type: String,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct IPCObservation {
+    pub r#type: String,
+    pub data: String
+}

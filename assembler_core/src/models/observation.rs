@@ -12,7 +12,6 @@ pub struct PlayerObservation {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EntityObservation {
-    pub id: u32,
     pub name: String,
     pub position: force::Position,
    

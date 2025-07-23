@@ -1,5 +1,6 @@
 local ipc = require("ipc")
 local commands = require("commands")
+local observation = require("observation")
 
 script.on_event(defines.events.on_built_entity, function(event)
     -- ipc:send(
@@ -8,11 +9,25 @@ script.on_event(defines.events.on_built_entity, function(event)
     ipc:send("ACK")
 end)
 
-
-
 -- Initiate handshake
 script.on_event(defines.events.on_tick, function()
     helpers.recv_udp()
+
+    if ipc.HANDSHAKE_COMPLETED then
+
+        local observation_data = {}
+
+        observation_data.entities = observation:collect_entities(
+            { x = 0, y = 0 }
+        )
+
+        local stringified = helpers.table_to_json(observation_data)
+
+        ipc:send_table({
+            type = "observation",
+            data = stringified
+        })
+    end
 end)
 
 
@@ -42,5 +57,6 @@ function handleHandshake(data)
         ipc:send("OK")
     elseif data.msg == "OK" then
         game.print("[IPC-HANDSHAKE] Recieved OK, ready!")
+        ipc.HANDSHAKE_COMPLETED = true
     end
 end
