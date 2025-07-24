@@ -22,4 +22,16 @@ function ipc:send_table(tbl)
     end
 end
 
+function ipc:handshake(data)
+    if ipc.HANDSHAKE_COMPLETED then return end
+    
+    if data.msg == "ACK" then
+        game.print("[IPC-HANDSHAKE] Recieved ACK")
+        ipc:send("OK")
+    elseif data.msg == "OK" then
+        game.print("[IPC-HANDSHAKE] Recieved OK, ready!")
+        ipc.HANDSHAKE_COMPLETED = true
+    end
+end
+
 return ipc

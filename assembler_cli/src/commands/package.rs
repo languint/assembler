@@ -1,6 +1,9 @@
-use std::{env, path::Path, process::Command};
+use std::{env, fs, path::Path, process::Command};
 
-use crate::{cli, commands, lua_mod};
+use crate::{
+    cli, commands,
+    lua_mod::{self, AssemblerConfig},
+};
 
 pub async fn package_command(version: String, launch: bool, port: u16) -> Result<(), String> {
     cli::log_header(
@@ -14,15 +17,47 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
         return Err(format!("Failed to migrate mod version: {}", e));
     }
 
-    let packaged_mod_name = format!("assembler_{}.zip", version);
+    let config_file_path = Path::new("mod").join("Assembler.toml");
 
+    if fs::exists(&config_file_path)
+        .map_err(|e| format!("Failed to check if Assembler.toml exists: {}", e))?
+    {
+        let config_file_contents = fs::read_to_string(&config_file_path)
+            .map_err(|e| format!("Failed to read Assembler.toml {e}"))?;
+
+        let config: AssemblerConfig =
+            toml::from_str(config_file_contents.as_str()).map_err(|_| "Invalid Assembler.toml")?;
+
+        if let Err(e) = lua_mod::write_lua_config(&config) {
+            return Err(format!("Failed to write config.lua: {}", e));
+        }
+
+        let packaged_mod_name = format!("assembler_{}.zip", version);
+
+        package_commands(packaged_mod_name)?;
+
+        if launch {
+            cli::log_header(
+                "PKG",
+                "Launching Factorio through Steam",
+                4,
+                Some(cli::CLI_YELLOW_HEADER),
+            );
+
+            commands::start::start_command(port).await?;
+        }
+    }
+
+    Ok(())
+}
+
+fn package_commands(packaged_mod_name: String) -> Result<(), String> {
     let zip_command = Command::new("zip")
         .arg("-r")
         .arg(&packaged_mod_name)
         .arg("mod")
         .output()
         .map_err(|_| "Failed to execute zip command")?;
-
     match zip_command.status {
         status if status.success() => {
             cli::log_header(
@@ -39,19 +74,15 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
             ));
         }
     }
-
     let factorio_path =
         env::var("FACTORIO_PATH").map_err(|_| "FACTORIO_PATH environment variable is not set.")?;
-
     let mods_path = Path::new(&factorio_path).join("mods");
-
     let copy_command = Command::new("mv")
         .arg(&packaged_mod_name)
         .arg(&mods_path)
         .output()
         .map_err(|_| "Failed to execute move command")?;
-
-    match copy_command.status {
+    Ok(match copy_command.status {
         status if status.success() => {
             cli::log_header(
                 "PKG",
@@ -70,16 +101,5 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
                 String::from_utf8_lossy(&copy_command.stderr)
             ));
         }
-    }
-
-    if launch {
-        cli::log_header(
-            "PKG",
-            "Launching Factorio through Steam",
-            4,
-            Some(cli::CLI_YELLOW_HEADER),
-        );
-        commands::start::start_command(port).await?
-    }
-    Ok(())
+    })
 }

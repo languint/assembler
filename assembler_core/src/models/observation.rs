@@ -14,7 +14,7 @@ pub struct PlayerObservation {
 pub struct EntityObservation {
     pub name: String,
     pub position: force::Position,
-   
+
     pub direction: Option<force::Direction>,
     pub orientation: Option<force::RealOrientation>,
 
@@ -42,9 +42,7 @@ pub struct GameObservation {
 #[serde(tag = "action_type")]
 pub enum GameAction {
     #[serde(rename = "move_to_position")]
-    MoveToPosition {
-        target: force::Position,
-    },
+    MoveToPosition { target: force::Position },
     #[serde(rename = "build_entity")]
     BuildEntity {
         entity_name: String,
@@ -53,19 +51,11 @@ pub enum GameAction {
         orientation: Option<force::RealOrientation>,
     },
     #[serde(rename = "craft_item")]
-    CraftItem {
-        item_name: String,
-        amount: u32,
-    },
+    CraftItem { item_name: String, amount: u32 },
     #[serde(rename = "research_technology")]
-    ResearchTechnology {
-        tech_name: String,
-    },
+    ResearchTechnology { tech_name: String },
     #[serde(rename = "set_assembler_recipe")]
-    SetAssemblerRecipe {
-        entity_id: u32,
-        recipe_name: String,
-    },
+    SetAssemblerRecipe { entity_id: u32, recipe_name: String },
     #[serde(rename = "no_op")]
     NoOp,
 }

@@ -53,3 +53,49 @@ pub fn migrate_mod_version(version: &str) -> Result<(), String> {
 
     Ok(())
 }
+
+#[derive(Deserialize)]
+pub struct IPCConfig {
+    pub factorio_port: u32,
+    pub handshake_port: u32,
+}
+
+#[derive(Deserialize)]
+pub struct AssemblerConfig {
+    pub ipc: IPCConfig,
+}
+
+pub fn write_lua_config(config: &AssemblerConfig) -> Result<(), String> {
+    let factorio_port = config.ipc.factorio_port;
+    let handshake_port = config.ipc.handshake_port;
+
+    let source = format!(
+        r#"
+-- generated from assembler_cli, do not manually edit.
+return {{
+    ipc = {{
+        factorio_port = {factorio_port},
+        handshake_port = {handshake_port}
+    }}
+}}
+    "#
+    );
+
+    let file_path = Path::new("mod").join("config.lua");
+
+    if fs::exists(&file_path).map_err(|e| format!("Failed to check if file exists: {}", e))? {
+        match fs::write(&file_path, source) {
+            Ok(_) => {
+                cli::log_header(
+                    "PKG",
+                    "Successfully wrote config.lua",
+                    4,
+                    Some(cli::CLI_YELLOW_HEADER),
+                );
+            }
+            Err(e) => return Err(format!("Failed to write to config.lua: {}", e)),
+        }
+    }
+
+    Ok(())
+}

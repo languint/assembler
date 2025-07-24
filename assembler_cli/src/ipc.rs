@@ -90,5 +90,5 @@ pub struct IPCMessage {
 #[derive(Debug, serde::Deserialize)]
 pub struct IPCObservation {
     pub r#type: String,
-    pub data: String
+    pub data: String,
 }

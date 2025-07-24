@@ -1,11 +1,9 @@
 use std::process::{Command, Stdio};
-use std::str::from_utf8;
 use std::sync::Arc;
 
 use crate::ipc::{self, Ipc};
 
 use crate::cli;
-use libdeflater::Decompressor;
 use tokio::sync::{Mutex, mpsc};
 
 fn start_factorio(port: u16) -> Result<(), String> {
@@ -99,50 +97,6 @@ pub async fn start_command(port: u16) -> Result<(), String> {
                     }
 
                     let msg_json = msg_json.unwrap();
-
-                    if msg_json.r#type == "observation" {
-                        cli::log_header(
-                            "IPC-OBSERVATION",
-                            "Recieved observation data",
-                            0,
-                            Some(cli::CLI_YELLOW_HEADER),
-                        );
-                        let msg_json = serde_json::from_str::<ipc::IPCObservation>(msg.as_str());
-
-                        match msg_json {
-                            Ok(observation) => {
-                                let data: serde_json::Value = serde_json::from_str(observation.data.as_str()).unwrap();
-
-                                cli::log_header(
-                                    "IPC-OBSERVATION",
-                                    format!("Observation data: {}", serde_json::to_string_pretty(&data).unwrap()).as_str(),
-                                    0,
-                                    Some(cli::CLI_YELLOW_HEADER),
-                                );
-                                tx_recv
-                                    .send(format!(
-                                        "observation: {}",
-                                        observation.data
-                                    ))
-                                    .unwrap();
-                            }
-                            Err(e) => {
-                                cli::log_error(
-                                    "IPC-OBSERVATION",
-                                    format!("Failed to parse observation: {}", e).as_str(),
-                                    0,
-                                    Some(cli::CLI_RED_HEADER),
-                                );
-                            }
-                        }
-                    } else {
-                        cli::log_error(
-                            "IPC",
-                            format!("Unknown message type: {}", msg_json.r#type).as_str(),
-                            0,
-                            Some(cli::CLI_RED_HEADER),
-                        );
-                    }
                 }
             }
         }
