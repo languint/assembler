@@ -1,11 +1,8 @@
 use std::sync::Arc;
 
-use crate::ipc::{self, Ipc};
-use crate::ipc::handshake::{
-    HANDSHAKE_ACK_MESSAGE, HANDSHAKE_OK_MESSAGE, HandshakePayload, HandshakePayloadState,
-    HandshakeState,
-};
+use crate::ipc::handshake::{HandshakePayload, HandshakeState};
 use crate::ipc::schema::{GeneralIpcMessage, IpcSchema};
+use crate::ipc::{self, Ipc};
 
 use crate::cli;
 use crate::lua_mod::AssemblerConfig;
@@ -27,7 +24,7 @@ pub async fn start_command(config: &AssemblerConfig) -> Result<(), String> {
         loop {
             let msg = ipc_recv.receive().await?;
 
-            let mut state = handshake_state_recv.lock().await;
+            let state = handshake_state_recv.lock().await;
 
             let msg_json: GeneralIpcMessage =
                 serde_json::from_str(msg.as_str()).map_err(|_| "Recieved invalid JSON")?;
@@ -47,59 +44,8 @@ pub async fn start_command(config: &AssemblerConfig) -> Result<(), String> {
                 format!("Could not parse GeneralIpcMessage as HandshakePayload: {e}")
             })?;
 
-            match &*state {
-                HandshakeState::Init => {
-                    if msg_json.data.state == HandshakePayloadState::ACK {
-                        cli::log_header(
-                            "IPC-HANDSHAKE",
-                            "Recieved ACK, sending ACK",
-                            0,
-                            Some(cli::CLI_PURPLE_HEADER),
-                        );
-
-                        let ack_message =
-                            serde_json::to_string(&HANDSHAKE_ACK_MESSAGE).map_err(|e| {
-                                format!("Failed to serialize HANDSHAKE_ACK_MESSAGE: {e}")
-                            })?;
-
-                        tx_recv
-                            .send(ack_message)
-                            .map_err(|e| format!("Failed to send HANDSHAKE_ACK_MESSAGE {e}"))?;
-
-                        *state = HandshakeState::Acked;
-                    }
-                }
-                HandshakeState::Acked => {
-                    if msg_json.data.state == HandshakePayloadState::OK {
-                        cli::log_header(
-                            "IPC-HANDSHAKE",
-                            "Recieved OK, sending OK",
-                            0,
-                            Some(cli::CLI_PURPLE_HEADER),
-                        );
-
-                        let ok_message =
-                            serde_json::to_string(&HANDSHAKE_OK_MESSAGE).map_err(|e| {
-                                format!("Failed to serialize HANDSHAKE_OK_MESSAGE: {e}")
-                            })?;
-
-                        tx_recv
-                            .send(ok_message)
-                            .map_err(|e| format!("Failed to send HANDSHAKE_OK_MESSAGE {e}"))?;
-
-                        *state = HandshakeState::Ready;
-                        cli::log_header(
-                            "IPC-HANDSHAKE",
-                            "OK-OK, READY!",
-                            0,
-                            Some(cli::CLI_PURPLE_HEADER),
-                        );
-                    }
-                }
-                HandshakeState::Ready => {}
-            }
+            ipc::handshake::handshake_handler(&tx_recv, state, msg_json)?;
         }
-
         #[allow(unreachable_code)]
         Ok(())
     });
