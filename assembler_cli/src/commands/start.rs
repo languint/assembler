@@ -1,9 +1,12 @@
 use std::process::{Command, Stdio};
 use std::sync::Arc;
 
-use crate::ipc::handshake::{HANDSHAKE_ACK_MESSAGE, HANDSHAKE_OK_MESSAGE, HandshakeState};
+use crate::ipc::Ipc;
+use crate::ipc::handshake::{
+    HANDSHAKE_ACK_MESSAGE, HANDSHAKE_OK_MESSAGE, HandshakePayload, HandshakePayloadState,
+    HandshakeState,
+};
 use crate::ipc::schema::{GeneralIpcMessage, IpcSchema};
-use crate::ipc::{self, Ipc, handshake};
 
 use crate::cli;
 use crate::lua_mod::AssemblerConfig;
@@ -63,11 +66,17 @@ pub async fn start_command(config: &AssemblerConfig) -> Result<(), String> {
                     0,
                     Some(cli::CLI_RED_HEADER),
                 );
+
+                return Err("Recieved invalid schema!".to_string());
             }
+
+            let msg_json: HandshakePayload = serde_json::from_str(msg.as_str()).map_err(|e| {
+                format!("Could not parse GeneralIpcMessage as HandshakePayload: {e}")
+            })?;
 
             match &*state {
                 HandshakeState::Init => {
-                    if msg_json.schema == IpcSchema::HANDSHAKE {
+                    if msg_json.data.state == HandshakePayloadState::ACK {
                         cli::log_header(
                             "IPC-HANDSHAKE",
                             "Recieved ACK, sending ACK",
@@ -85,7 +94,7 @@ pub async fn start_command(config: &AssemblerConfig) -> Result<(), String> {
                     }
                 }
                 HandshakeState::Acked => {
-                    if msg.trim() == "OK" {
+                    if msg_json.data.state == HandshakePayloadState::OK {
                         cli::log_header(
                             "IPC-HANDSHAKE",
                             "Recieved OK, sending OK!",
@@ -111,8 +120,9 @@ pub async fn start_command(config: &AssemblerConfig) -> Result<(), String> {
                 HandshakeState::Ready => {}
             }
         }
+
         #[allow(unreachable_code)]
-        Ok::<(), String>(())
+        Ok(())
     });
 
     let ipc_send = handshake_ipc.clone();

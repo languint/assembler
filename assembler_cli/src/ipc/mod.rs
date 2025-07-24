@@ -63,4 +63,3 @@ impl Ipc {
         Ok(message)
     }
 }
-

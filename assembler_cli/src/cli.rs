@@ -14,7 +14,7 @@ pub enum Commands {
         #[arg(short, long, default_value = "false")]
         launch: bool,
     },
-    Start
+    Start,
 }
 
 pub fn log_header(header: &str, message: &str, depth: u8, color: Option<DynColors>) {

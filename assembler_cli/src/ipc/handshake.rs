@@ -9,7 +9,7 @@ pub enum HandshakeState {
     Ready,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, PartialEq)]
 pub enum HandshakePayloadState {
     ACK,
     OK,
@@ -29,13 +29,13 @@ pub struct HandshakePayload {
 pub const HANDSHAKE_OK_MESSAGE: HandshakePayload = HandshakePayload {
     schema: IpcSchema::HANDSHAKE,
     data: HandshakePayloadData {
-        state: HandshakePayloadState::OK
-    }
+        state: HandshakePayloadState::OK,
+    },
 };
 
 pub const HANDSHAKE_ACK_MESSAGE: HandshakePayload = HandshakePayload {
     schema: IpcSchema::HANDSHAKE,
     data: HandshakePayloadData {
-        state: HandshakePayloadState::ACK
-    }
+        state: HandshakePayloadState::ACK,
+    },
 };
