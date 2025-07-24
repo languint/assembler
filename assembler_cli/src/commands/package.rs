@@ -1,11 +1,15 @@
-use std::{env, fs, path::Path, process::Command};
+use std::{env, path::Path, process::Command};
 
 use crate::{
     cli, commands,
     lua_mod::{self, AssemblerConfig},
 };
 
-pub async fn package_command(version: String, launch: bool, port: u16) -> Result<(), String> {
+pub async fn package_command(
+    version: String,
+    launch: bool,
+    config: &AssemblerConfig,
+) -> Result<(), String> {
     cli::log_header(
         "PKG",
         format!("Starting packaging process for assembler `{}`", version).as_str(),
@@ -17,35 +21,23 @@ pub async fn package_command(version: String, launch: bool, port: u16) -> Result
         return Err(format!("Failed to migrate mod version: {}", e));
     }
 
-    let config_file_path = Path::new("mod").join("Assembler.toml");
+    if let Err(e) = lua_mod::write_lua_config(&config) {
+        return Err(format!("Failed to write config.lua: {}", e));
+    }
 
-    if fs::exists(&config_file_path)
-        .map_err(|e| format!("Failed to check if Assembler.toml exists: {}", e))?
-    {
-        let config_file_contents = fs::read_to_string(&config_file_path)
-            .map_err(|e| format!("Failed to read Assembler.toml {e}"))?;
+    let packaged_mod_name = format!("assembler_{}.zip", version);
 
-        let config: AssemblerConfig =
-            toml::from_str(config_file_contents.as_str()).map_err(|_| "Invalid Assembler.toml")?;
+    package_commands(packaged_mod_name)?;
 
-        if let Err(e) = lua_mod::write_lua_config(&config) {
-            return Err(format!("Failed to write config.lua: {}", e));
-        }
+    if launch {
+        cli::log_header(
+            "PKG",
+            "Launching Factorio through Steam",
+            4,
+            Some(cli::CLI_YELLOW_HEADER),
+        );
 
-        let packaged_mod_name = format!("assembler_{}.zip", version);
-
-        package_commands(packaged_mod_name)?;
-
-        if launch {
-            cli::log_header(
-                "PKG",
-                "Launching Factorio through Steam",
-                4,
-                Some(cli::CLI_YELLOW_HEADER),
-            );
-
-            commands::start::start_command(port).await?;
-        }
+        commands::start::start_command(config).await?;
     }
 
     Ok(())

@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use owo_colors::{AnsiColors, DynColors, OwoColorize, colors::*};
+use owo_colors::{AnsiColors, DynColors, OwoColorize};
 #[derive(Parser, Debug)]
 pub struct Cli {
     #[command(subcommand)]
@@ -13,13 +13,8 @@ pub enum Commands {
         version: String,
         #[arg(short, long, default_value = "false")]
         launch: bool,
-        #[arg(short, long, default_value = "8080")]
-        port: u16,
     },
-    Start {
-        #[arg(short, long, default_value = "8080")]
-        port: u16,
-    },
+    Start
 }
 
 pub fn log_header(header: &str, message: &str, depth: u8, color: Option<DynColors>) {
