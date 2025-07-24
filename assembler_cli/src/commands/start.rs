@@ -84,10 +84,13 @@ pub async fn start_command(config: &AssemblerConfig) -> Result<(), String> {
                             Some(cli::CLI_PURPLE_HEADER),
                         );
 
-                        tx_recv
-                            .send(serde_json::to_string(&HANDSHAKE_ACK_MESSAGE).map_err(|e| {
+                        let ack_message =
+                            serde_json::to_string(&HANDSHAKE_ACK_MESSAGE).map_err(|e| {
                                 format!("Failed to serialize HANDSHAKE_ACK_MESSAGE: {e}")
-                            })?)
+                            })?;
+
+                        tx_recv
+                            .send(ack_message)
                             .map_err(|e| format!("Failed to send HANDSHAKE_ACK_MESSAGE {e}"))?;
 
                         *state = HandshakeState::Acked;
@@ -97,15 +100,18 @@ pub async fn start_command(config: &AssemblerConfig) -> Result<(), String> {
                     if msg_json.data.state == HandshakePayloadState::OK {
                         cli::log_header(
                             "IPC-HANDSHAKE",
-                            "Recieved OK, sending OK!",
+                            "Recieved OK, sending OK",
                             0,
                             Some(cli::CLI_PURPLE_HEADER),
                         );
 
-                        tx_recv
-                            .send(serde_json::to_string(&HANDSHAKE_OK_MESSAGE).map_err(|e| {
+                        let ok_message =
+                            serde_json::to_string(&HANDSHAKE_OK_MESSAGE).map_err(|e| {
                                 format!("Failed to serialize HANDSHAKE_OK_MESSAGE: {e}")
-                            })?)
+                            })?;
+
+                        tx_recv
+                            .send(ok_message)
                             .map_err(|e| format!("Failed to send HANDSHAKE_OK_MESSAGE {e}"))?;
 
                         *state = HandshakeState::Ready;

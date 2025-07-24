@@ -1,36 +1,25 @@
 local ipc = {}
-ipc.PORT = 8080
+
 ipc.HANDSHAKE_COMPLETED = false
+ipc.HANDSHAKE_STATES = {
+    ACK = "ACK",
+    OK = "OK"
+}
+ipc.SCHEMAS = {
+    HANDSHAKE = "HANDSHAKE"
+}
 
-function ipc:send(message)
+function ipc:send_table(tbl, port)
     if helpers then
-        game.print("[IPC] Sent message `" .. message .. "` to port " .. ipc.PORT)
-        helpers.send_udp(ipc.PORT, message)
-    else
-        game.print("[IPC] helpers is nil, cannot send message.")
-    end
-end
-
-function ipc:send_table(tbl)
-    if helpers then
-        game.print("[IPC] Sending table to port " .. ipc.PORT)
         local stringified = helpers.table_to_json(tbl)
 
-        helpers.send_udp(ipc.PORT, stringified)
+        if stringified then
+            helpers.send_udp(port, stringified)
+        else
+            game.print("[IPC] Failed to convert table to json, ignoring.")
+        end
     else
         game.print("[IPC] helpers is nil, cannot send table.")
-    end
-end
-
-function ipc:handshake(data)
-    if ipc.HANDSHAKE_COMPLETED then return end
-    
-    if data.msg == "ACK" then
-        game.print("[IPC-HANDSHAKE] Recieved ACK")
-        ipc:send("OK")
-    elseif data.msg == "OK" then
-        game.print("[IPC-HANDSHAKE] Recieved OK, ready!")
-        ipc.HANDSHAKE_COMPLETED = true
     end
 end
 
