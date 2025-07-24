@@ -58,6 +58,7 @@ pub fn migrate_mod_version(version: &str) -> Result<(), String> {
 pub struct IPCConfig {
     pub factorio_port: u32,
     pub handshake_port: u32,
+    pub observation_port: u32,
 }
 
 #[derive(Deserialize)]

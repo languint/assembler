@@ -6,7 +6,8 @@ ipc.HANDSHAKE_STATES = {
     OK = "OK"
 }
 ipc.SCHEMAS = {
-    HANDSHAKE = "HANDSHAKE"
+    HANDSHAKE = "HANDSHAKE",
+    OBSERVATION = "OBSERVATION",
 }
 
 function ipc:send_table(tbl, port)

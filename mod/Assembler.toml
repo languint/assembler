@@ -1,3 +1,4 @@
 [ipc]
 factorio_port = 8080
 handshake_port = 4040
+observation_port = 4041

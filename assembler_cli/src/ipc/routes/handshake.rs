@@ -3,7 +3,7 @@ use tokio::sync::mpsc;
 
 use crate::{cli, ipc::schema::IpcSchema};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum HandshakeState {
     Init,
     Acked,
@@ -41,9 +41,12 @@ pub const HANDSHAKE_ACK_MESSAGE: HandshakePayload = HandshakePayload {
     },
 };
 
-
-pub fn handshake_handler(tx_recv: &mpsc::UnboundedSender<String>, mut state: tokio::sync::MutexGuard<'_, HandshakeState>, msg_json: HandshakePayload) -> Result<(), String> {
-    Ok(match &*state {
+pub fn handle_packet(
+    tx_recv: &mpsc::UnboundedSender<String>,
+    mut state: tokio::sync::MutexGuard<'_, HandshakeState>,
+    msg_json: HandshakePayload,
+) -> Result<bool, String> {
+    match *state {
         HandshakeState::Init => {
             if msg_json.data.state == HandshakePayloadState::ACK {
                 cli::log_header(
@@ -53,10 +56,8 @@ pub fn handshake_handler(tx_recv: &mpsc::UnboundedSender<String>, mut state: tok
                     Some(cli::CLI_PURPLE_HEADER),
                 );
 
-                let ack_message =
-                    serde_json::to_string(&HANDSHAKE_ACK_MESSAGE).map_err(|e| {
-                        format!("Failed to serialize HANDSHAKE_ACK_MESSAGE: {e}")
-                    })?;
+                let ack_message = serde_json::to_string(&HANDSHAKE_ACK_MESSAGE)
+                    .map_err(|e| format!("Failed to serialize HANDSHAKE_ACK_MESSAGE: {e}"))?;
 
                 tx_recv
                     .send(ack_message)
@@ -64,6 +65,7 @@ pub fn handshake_handler(tx_recv: &mpsc::UnboundedSender<String>, mut state: tok
 
                 *state = HandshakeState::Acked;
             }
+            Ok(true) // Continue
         }
         HandshakeState::Acked => {
             if msg_json.data.state == HandshakePayloadState::OK {
@@ -74,10 +76,8 @@ pub fn handshake_handler(tx_recv: &mpsc::UnboundedSender<String>, mut state: tok
                     Some(cli::CLI_PURPLE_HEADER),
                 );
 
-                let ok_message =
-                    serde_json::to_string(&HANDSHAKE_OK_MESSAGE).map_err(|e| {
-                        format!("Failed to serialize HANDSHAKE_OK_MESSAGE: {e}")
-                    })?;
+                let ok_message = serde_json::to_string(&HANDSHAKE_OK_MESSAGE)
+                    .map_err(|e| format!("Failed to serialize HANDSHAKE_OK_MESSAGE: {e}"))?;
 
                 tx_recv
                     .send(ok_message)
@@ -90,8 +90,11 @@ pub fn handshake_handler(tx_recv: &mpsc::UnboundedSender<String>, mut state: tok
                     0,
                     Some(cli::CLI_PURPLE_HEADER),
                 );
+                Ok(false) // Handshake complete, stop.
+            } else {
+                Ok(true) // Continue
             }
         }
-        HandshakeState::Ready => {}
-    })
+        HandshakeState::Ready => Ok(false), // Already ready, stop.
+    }
 }
