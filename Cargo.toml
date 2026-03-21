@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = []
+members = ["library/assembler-codegen"]
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
