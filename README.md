@@ -3,6 +3,9 @@
     <p>A Rust to Lua transpiler for Factorio's modding api</p>
 </div>
 
+> [!CAUTION]
+> This project is a work in progress, expect breaking changes. 
+
 ## Testing
 
 Integration tests parse the real Factorio API files. Point `FACTORIO_HOME` at your Factorio install directory and they will be picked up automatically:
