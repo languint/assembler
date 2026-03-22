@@ -2,7 +2,7 @@ use crate::schema::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct Parameter {
-    /// serde::default needed because [`Method::return_values`] do not specify a `name`
+    /// `serde::default` needed because [`Method::return_values`] do not specify a `name`
     #[serde(default)]
     pub name: String,
     pub order: u64,
