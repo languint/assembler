@@ -1,6 +1,7 @@
 pub mod classes;
 pub mod concepts;
 pub mod defines;
+pub mod globals;
 pub mod types;
 
 pub use classes::{emit_class_impl, emit_class_shell, emit_class_trait};

@@ -8,6 +8,22 @@ pub fn map_type(ty: &RuntimeType) -> proc_macro2::TokenStream {
     }
 }
 
+pub fn map_param_type(ty: &RuntimeType, optional: bool) -> proc_macro2::TokenStream {
+    let base = map_type(ty);
+
+    let base = if base.to_string() == "LocalisedString" {
+        quote! { impl Into<LocalisedString> }
+    } else {
+        base
+    };
+
+    if optional {
+        quote! { Option<#base> }
+    } else {
+        base
+    }
+}
+
 pub fn map_simple(name: &str) -> proc_macro2::TokenStream {
     match name {
         "string" => quote! { String },

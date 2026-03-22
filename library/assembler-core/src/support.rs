@@ -1,3 +1,5 @@
+use crate::concepts::LocalisedString;
+
 /// Opaque handle to a Factorio Lua object, never constructed at runtime
 #[derive(Clone, Debug)]
 pub struct LuaHandle(());
@@ -30,7 +32,12 @@ pub struct LuaLazyLoadedValue<T>(std::marker::PhantomData<T>);
 /// Never constructed at runtime, transpiled to Lua type checks
 pub type Union1<A> = A;
 #[derive(Clone, Debug)]
-pub struct Union2<A, B>(std::marker::PhantomData<(A, B)>);
+pub struct Union2<A, B>(pub std::marker::PhantomData<(A, B)>);
+impl<A, B> Default for Union2<A, B> {
+    fn default() -> Self {
+        Self(std::marker::PhantomData)
+    }
+}
 #[derive(Clone, Debug)]
 pub struct Union3<A, B, C>(std::marker::PhantomData<(A, B, C)>);
 #[derive(Clone, Debug)]
@@ -43,3 +50,39 @@ pub struct Union6<A, B, C, D, E, F>(std::marker::PhantomData<(A, B, C, D, E, F)>
 pub struct Union7<A, B, C, D, E, F, G>(std::marker::PhantomData<(A, B, C, D, E, F, G)>);
 #[derive(Clone, Debug)]
 pub struct Union8<A, B, C, D, E, F, G, H>(std::marker::PhantomData<(A, B, C, D, E, F, G, H)>);
+
+impl From<&str> for LocalisedString {
+    fn from(_: &str) -> Self {
+        LocalisedString(vec![])
+    }
+}
+
+impl From<String> for LocalisedString {
+    fn from(_: String) -> Self {
+        LocalisedString(vec![])
+    }
+}
+
+impl From<f64> for LocalisedString {
+    fn from(_: f64) -> Self {
+        LocalisedString(vec![])
+    }
+}
+
+impl From<i32> for LocalisedString {
+    fn from(_: i32) -> Self {
+        LocalisedString(vec![])
+    }
+}
+
+impl From<bool> for LocalisedString {
+    fn from(_: bool) -> Self {
+        LocalisedString(vec![])
+    }
+}
+
+impl From<Vec<LocalisedString>> for LocalisedString {
+    fn from(_: Vec<LocalisedString>) -> Self {
+        LocalisedString(vec![])
+    }
+}

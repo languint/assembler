@@ -1,5 +1,5 @@
 use assembler_codegen::emit::{
-    concepts::emit_concept, emit_class_impl, emit_class_trait, emit_define,
+    concepts::emit_concept, emit_class_impl, emit_class_trait, emit_define, globals::emit_globals,
 };
 use assembler_schema::prelude::RuntimeApiRoot;
 use quote::{format_ident, quote};
@@ -55,6 +55,9 @@ fn main() {
         #(#concepts)*
     };
     write_formatted(&out_dir.join("concepts.rs"), concepts_file);
+
+    let globals_file = emit_globals(&api.global_objects, &api.global_functions);
+    write_formatted(&out_dir.join("globals.rs"), globals_file);
 }
 
 fn write_formatted(path: &PathBuf, tokens: proc_macro2::TokenStream) {

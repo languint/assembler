@@ -3,7 +3,7 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::emit::sanitize_ident;
-use crate::emit::types::map_type;
+use crate::emit::types::{map_param_type, map_type};
 
 pub fn emit_class_shell(class: &Class) -> proc_macro2::TokenStream {
     let name = format_ident!("{}", class.basic_member.name);
@@ -356,12 +356,8 @@ fn emit_method_params(method: &Method) -> Vec<TokenStream> {
         .iter()
         .map(|p| {
             let name = format_ident!("{}", sanitize_ident(&p.name));
-            let ty = map_type(&p.ty);
-            if p.optional {
-                quote! { #name: Option<#ty> }
-            } else {
-                quote! { #name: #ty }
-            }
+            let ty = map_param_type(&p.ty, p.optional);
+            quote! { #name: #ty }
         })
         .collect();
 

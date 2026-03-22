@@ -10,7 +10,7 @@ pub fn emit_concept(concept: &RuntimeConcept) -> proc_macro2::TokenStream {
         return quote! {
             #[doc = #doc]
             #[derive(Debug, Clone)]
-            pub struct LocalisedString(Vec<LuaAnyValue>);
+            pub struct LocalisedString(pub Vec<LuaAnyValue>);
         };
     }
 
