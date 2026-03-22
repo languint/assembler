@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["library/assembler-codegen", "library/assembler-schema"]
+members = ["assembler","library/assembler-codegen", "library/assembler-schema"]
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
@@ -9,3 +9,4 @@ unwrap_used = "deny"
 module_inception = "allow"
 
 [workspace.dependencies]
+assembler-schema = { path = "./library/assembler-schema" }

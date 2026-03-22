@@ -52,6 +52,7 @@ pub enum RuntimeComplexType {
     LuaStruct {
         attributes: Vec<Attribute>,
     },
+    Builtin,
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]

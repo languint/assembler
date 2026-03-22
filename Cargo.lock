@@ -3,6 +3,15 @@
 version = 4
 
 [[package]]
+name = "assembler"
+version = "0.1.0"
+dependencies = [
+ "assembler-schema",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "assembler-codegen"
 version = "0.1.0"
 dependencies = [
