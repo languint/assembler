@@ -21,4 +21,3 @@ mod visibility {
         assert!(matches!(v[0], Visibility::SpaceAge));
     }
 }
-
