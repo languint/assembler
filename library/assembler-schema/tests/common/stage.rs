@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod stage {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn runtime_variant() {

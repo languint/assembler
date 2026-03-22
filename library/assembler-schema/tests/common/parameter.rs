@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod parameter {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn required_parameter_with_simple_type() {

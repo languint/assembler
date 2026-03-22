@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod literal_value {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn string_variant() {

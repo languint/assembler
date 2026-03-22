@@ -10,3 +10,6 @@ module_inception = "allow"
 
 [workspace.dependencies]
 assembler-schema = { path = "./library/assembler-schema" }
+
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"

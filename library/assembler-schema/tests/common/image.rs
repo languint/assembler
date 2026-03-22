@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod image {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn without_caption() {

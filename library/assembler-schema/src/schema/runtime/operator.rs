@@ -1,4 +1,4 @@
-use crate::schema::prelude::*;
+use crate::prelude::*;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Operator {

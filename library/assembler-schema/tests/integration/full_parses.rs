@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod full_parses {
     use crate::utils::{prototype_json, runtime_json};
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn parses_full_runtime_api() {

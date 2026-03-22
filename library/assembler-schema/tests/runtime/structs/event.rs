@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod event {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn event_without_filter() {

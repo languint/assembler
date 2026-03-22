@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod custom_properties {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn minimal() {

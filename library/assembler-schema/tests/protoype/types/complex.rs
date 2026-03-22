@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod complex {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     fn unwrap_complex(t: PrototypeType) -> PrototypeComplexType {
         match t {

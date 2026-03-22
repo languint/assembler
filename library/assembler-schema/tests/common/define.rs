@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod define {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn flat_define_with_values() {

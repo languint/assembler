@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod class {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn minimal_concrete_class() {

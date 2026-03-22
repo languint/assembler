@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod visibility {
     use crate::utils::{assert_de_fails, de};
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn space_age_variant() {

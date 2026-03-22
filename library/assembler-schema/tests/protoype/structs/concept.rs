@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod concept {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn struct_concept_with_properties() {

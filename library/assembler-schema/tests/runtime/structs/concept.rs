@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod concept {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn concept_with_simple_type() {

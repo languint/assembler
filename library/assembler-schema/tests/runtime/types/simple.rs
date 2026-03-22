@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod simple {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn simple_named_type() {

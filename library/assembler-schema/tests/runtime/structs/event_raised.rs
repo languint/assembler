@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod event_raised {
     use crate::utils::de;
-    use assembler_schema::schema::prelude::*;
+    use assembler_schema::prelude::*;
 
     #[test]
     fn instantly() {
