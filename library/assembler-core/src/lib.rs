@@ -1,5 +1,10 @@
 pub mod support;
 
+mod private {
+    pub trait Sealed {}
+}
+pub use private::Sealed as __Sealed;
+
 #[allow(
     non_upper_case_globals,
     non_snake_case,
@@ -11,12 +16,6 @@ pub mod defines {
     include!(concat!(env!("OUT_DIR"), "/defines.rs"));
 }
 
-#[allow(non_upper_case_globals, non_snake_case, dead_code)]
-pub mod classes {
-    use crate::support::*;
-    include!(concat!(env!("OUT_DIR"), "/classes.rs"));
-}
-
 #[allow(
     non_upper_case_globals,
     non_snake_case,
@@ -25,5 +24,22 @@ pub mod classes {
 )]
 pub mod concepts {
     use crate::support::*;
+    use std::collections::HashMap;
     include!(concat!(env!("OUT_DIR"), "/concepts.rs"));
+}
+
+#[doc(hidden)]
+#[allow(non_upper_case_globals, non_snake_case, dead_code)]
+pub mod traits {
+    use crate::concepts::*;
+    use crate::support::*;
+    use std::collections::HashMap;
+    include!(concat!(env!("OUT_DIR"), "/classes.rs"));
+}
+
+pub mod prelude {
+    include!(concat!(env!("OUT_DIR"), "/reexports.rs"));
+
+    #[doc(hidden)]
+    pub use crate::traits::*;
 }

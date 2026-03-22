@@ -1,6 +1,8 @@
-use assembler_codegen::emit::{concepts::emit_concept, emit_class_shell, emit_define};
+use assembler_codegen::emit::{
+    concepts::emit_concept, emit_class_impl, emit_class_trait, emit_define,
+};
 use assembler_schema::prelude::RuntimeApiRoot;
-use quote::quote;
+use quote::{format_ident, quote};
 use std::{fs, path::PathBuf};
 
 fn main() {
@@ -28,16 +30,27 @@ fn main() {
     };
     write_formatted(&out_dir.join("defines.rs"), defines_file);
 
-    let classes = api.classes.iter().map(emit_class_shell);
+    let traits_tokens = api.classes.iter().map(emit_class_trait);
+    let impl_tokens = api.classes.iter().map(|c| emit_class_impl(c, &api.classes));
+
     let classes_file = quote! {
-        #(#classes)*
+        use crate::support::*;
+        use crate::concepts::*;
+        #(#traits_tokens)*
+        #(#impl_tokens)*
     };
     write_formatted(&out_dir.join("classes.rs"), classes_file);
 
+    let reexports = api.classes.iter().map(|c| {
+        let name = format_ident!("{}", c.basic_member.name);
+        quote! { pub use crate::traits::#name; }
+    });
+    let reexports_file = quote! { #(#reexports)* };
+    write_formatted(&out_dir.join("reexports.rs"), reexports_file);
+
     let concepts = api.concepts.iter().map(emit_concept);
     let concepts_file = quote! {
-        use std::collections::HashMap;
-        use crate::classes::*;
+        use crate::traits::*;
         use crate::support::*;
         #(#concepts)*
     };

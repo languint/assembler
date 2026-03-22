@@ -3,7 +3,7 @@ pub mod concepts;
 pub mod defines;
 pub mod types;
 
-pub use classes::emit_class_shell;
+pub use classes::{emit_class_impl, emit_class_shell, emit_class_trait};
 pub use defines::emit_define;
 
 fn sanitize_ident(s: &str) -> String {
