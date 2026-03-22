@@ -1,1 +1,2 @@
+mod structs;
 mod types;

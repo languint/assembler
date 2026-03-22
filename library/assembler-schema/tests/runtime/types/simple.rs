@@ -1,11 +1,7 @@
 #[cfg(test)]
 mod simple {
-    use crate::utils;
+    use crate::utils::de;
     use assembler_schema::schema::prelude::*;
-
-    fn de(s: &str) -> RuntimeType {
-        utils::de(s)
-    }
 
     #[test]
     fn simple_named_type() {
