@@ -1,13 +1,13 @@
 use crate::schema::prelude::*;
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 #[serde(untagged)]
 pub enum RuntimeType {
     Complex(Box<RuntimeComplexType>),
     Simple(String),
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 #[serde(tag = "complex_type", rename_all = "snake_case")]
 pub enum RuntimeComplexType {
     Type {
@@ -55,7 +55,7 @@ pub enum RuntimeComplexType {
     Builtin,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 #[serde(untagged)]
 pub enum RuntimeLiteralValue {
     String(String),

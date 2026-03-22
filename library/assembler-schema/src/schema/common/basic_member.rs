@@ -1,6 +1,6 @@
 use crate::schema::prelude::*;
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct BasicMember {
     pub name: String,
     pub order: u64,

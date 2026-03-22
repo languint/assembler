@@ -1,6 +1,6 @@
 use crate::schema::prelude::*;
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct Event {
     #[serde(flatten)]
     pub basic_member: BasicMember,

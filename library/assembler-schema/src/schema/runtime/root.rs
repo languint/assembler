@@ -1,6 +1,6 @@
 use crate::schema::prelude::*;
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct RuntimeApiRoot {
     pub application: String,
     pub application_version: String,

@@ -1,6 +1,6 @@
 use crate::schema::prelude::*;
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct Method {
     #[serde(flatten)]
     pub basic_member: BasicMember,
@@ -15,14 +15,14 @@ pub struct Method {
     pub return_values: Vec<Parameter>,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct VariadicParameter {
     #[serde(rename = "type")]
     pub ty: Option<RuntimeType>,
     pub description: Option<String>,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct MethodFormat {
     pub takes_table: bool,
     pub table_optional: Option<bool>,

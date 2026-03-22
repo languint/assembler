@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TimeFrame {
     Instantly,
@@ -6,7 +6,7 @@ pub enum TimeFrame {
     FutureTick,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct EventRaised {
     pub name: String,
     pub order: u64,

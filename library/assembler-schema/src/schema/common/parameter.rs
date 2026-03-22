@@ -1,6 +1,6 @@
 use crate::schema::prelude::*;
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct Parameter {
     pub name: String,
     pub order: u64,
@@ -10,7 +10,7 @@ pub struct Parameter {
     pub optional: bool,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde::Deserialize)]
 pub struct ParameterGroup {
     pub name: String,
     pub order: u64,
