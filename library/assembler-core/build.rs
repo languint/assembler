@@ -1,4 +1,4 @@
-use assembler_codegen::emit::defines::emit_define;
+use assembler_codegen::emit::{emit_class_shell, emit_define};
 use assembler_schema::prelude::RuntimeApiRoot;
 use quote::quote;
 use std::{fs, path::PathBuf};
@@ -27,6 +27,12 @@ fn main() {
         #(#defines)*
     };
     write_formatted(&out_dir.join("defines.rs"), defines_file);
+
+    let classes = api.classes.iter().map(emit_class_shell);
+    let classes_file = quote! {
+        #(#classes)*
+    };
+    write_formatted(&out_dir.join("classes.rs"), classes_file);
 }
 
 fn write_formatted(path: &PathBuf, tokens: proc_macro2::TokenStream) {
