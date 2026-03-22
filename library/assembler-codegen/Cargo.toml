@@ -5,8 +5,8 @@ edition = "2024"
 
 [dependencies]
 assembler-schema = { workspace = true }
-proc-macro2 = "1.0.106"
-quote = "1.0.45"
 
 serde = { workspace = true }
 serde_json = { workspace = true }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
