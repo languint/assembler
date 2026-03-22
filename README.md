@@ -1,6 +1,7 @@
 <div align="center">
     <h1>assembler</h1>
     <p>A Rust to Lua transpiler for Factorio's modding api</p>
+</div>
 
 ## Testing
 
@@ -18,5 +19,3 @@ $env:FACTORIO_HOME="C:\Program Files (x86)\Steam\steamapps\common\Factorio"; car
 ```
 
 The JSON files are read from `$FACTORIO_HOME/doc-html/runtime-api.json` and `$FACTORIO_HOME/doc-html/prototype-api.json`. Integration tests are silently skipped when `FACTORIO_HOME` is not set.
-
-</div>
