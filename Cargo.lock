@@ -22,6 +22,7 @@ dependencies = [
  "quote",
  "serde",
  "serde_json",
+ "syn",
 ]
 
 [[package]]

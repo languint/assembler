@@ -8,10 +8,12 @@ pub fn map_type(ty: &RuntimeType) -> proc_macro2::TokenStream {
     }
 }
 
-fn map_simple(name: &str) -> proc_macro2::TokenStream {
+pub fn map_simple(name: &str) -> proc_macro2::TokenStream {
     match name {
         "string" => quote! { String },
+        "number" => quote! { f64 },
         "boolean" => quote! { bool },
+        "table" => quote! { LuaTable },
         "uint" => quote! { u32 },
         "uint8" => quote! { u8 },
         "uint16" => quote! { u16 },
@@ -19,10 +21,14 @@ fn map_simple(name: &str) -> proc_macro2::TokenStream {
         "uint64" => quote! { u64 },
         "int" => quote! { i32 },
         "int8" => quote! { i8 },
+        "int16" => quote! { i16 },
+        "int32" => quote! { i32 },
         "double" => quote! { f64 },
         "float" => quote! { f32 },
         "nil" => quote! { () },
         "Any" => quote! { LuaAnyValue },
+        // all define values are `u64`
+        other if other.starts_with("defines.") => quote! { u64 },
         other => {
             let i = format_ident!("{}", sanitize_ident(other));
             quote! { #i }
@@ -85,11 +91,12 @@ fn map_union(options: &[RuntimeType]) -> proc_macro2::TokenStream {
         1 => non_nil.into_iter().next().unwrap(),
         _ => {
             let unique = dedup_token_streams(non_nil);
-            if unique.len() == 1 {
-                unique.into_iter().next().unwrap()
-            } else {
+            if unique.len() <= 8 {
                 let arity = format_ident!("Union{}", unique.len());
                 quote! { #arity<#(#unique),*> }
+            } else {
+                // too many arms for a generic union, use opaque value
+                quote! { LuaMultiValue }
             }
         }
     };

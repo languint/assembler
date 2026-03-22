@@ -1,4 +1,4 @@
-use assembler_codegen::emit::{emit_class_shell, emit_define};
+use assembler_codegen::emit::{concepts::emit_concept, emit_class_shell, emit_define};
 use assembler_schema::prelude::RuntimeApiRoot;
 use quote::quote;
 use std::{fs, path::PathBuf};
@@ -33,6 +33,15 @@ fn main() {
         #(#classes)*
     };
     write_formatted(&out_dir.join("classes.rs"), classes_file);
+
+    let concepts = api.concepts.iter().map(emit_concept);
+    let concepts_file = quote! {
+        use std::collections::HashMap;
+        use crate::classes::*;
+        use crate::support::*;
+        #(#concepts)*
+    };
+    write_formatted(&out_dir.join("concepts.rs"), concepts_file);
 }
 
 fn write_formatted(path: &PathBuf, tokens: proc_macro2::TokenStream) {

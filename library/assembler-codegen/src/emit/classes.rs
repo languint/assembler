@@ -7,6 +7,7 @@ pub fn emit_class_shell(class: &Class) -> proc_macro2::TokenStream {
 
     quote! {
         #[doc = #doc]
+        #[derive(Debug, Clone)]
         pub struct #name(LuaHandle);
     }
 }
