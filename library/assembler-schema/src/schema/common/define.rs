@@ -1,0 +1,16 @@
+use crate::schema::prelude::*;
+
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct Define {
+    #[serde(flatten)]
+    pub basic_member: BasicMember,
+    pub values: Option<Vec<DefineValue>>,
+    pub subkeys: Option<Vec<Define>>,
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct DefineValue {
+    pub name: String,
+    pub order: u64,
+    pub description: String,
+}
