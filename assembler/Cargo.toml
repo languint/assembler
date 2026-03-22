@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 assembler-schema = { workspace = true }
 assembler-codegen = { workspace = true }
+assembler-core = { workspace = true }
 
 serde = { workspace = true }
 serde_json = { workspace = true }

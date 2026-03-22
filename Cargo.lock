@@ -7,6 +7,7 @@ name = "assembler"
 version = "0.1.0"
 dependencies = [
  "assembler-codegen",
+ "assembler-core",
  "assembler-schema",
  "serde",
  "serde_json",
@@ -24,15 +25,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "assembler-schema"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "factorio-api"
+name = "assembler-core"
 version = "0.1.0"
 dependencies = [
  "assembler-codegen",
@@ -43,6 +36,14 @@ dependencies = [
  "serde",
  "serde_json",
  "syn",
+]
+
+[[package]]
+name = "assembler-schema"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
