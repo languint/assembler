@@ -6,12 +6,12 @@ use quote::{format_ident, quote};
 use std::{fs, path::PathBuf};
 
 fn main() {
-    let out_dir = PathBuf::from(std::env::var("OUT_DIR").unwrap());
+    let out_dir = PathBuf::from(std::env::var("OUT_DIR").expect("OUT_DIR must be set"));
 
     println!("cargo:rerun-if-env-changed=FACTORIO_HOME");
 
-    let home =
-        std::env::var("FACTORIO_HOME").expect("FACTORIO_HOME must be set to generate factorio-api");
+    let home = std::env::var("FACTORIO_HOME")
+        .expect("FACTORIO_HOME must be set to generate assembler-core");
 
     let runtime_path = PathBuf::from(&home)
         .join("doc-html")
@@ -52,6 +52,7 @@ fn main() {
     let concepts_file = quote! {
         use crate::traits::*;
         use crate::support::*;
+
         #(#concepts)*
     };
     write_formatted(&out_dir.join("concepts.rs"), concepts_file);

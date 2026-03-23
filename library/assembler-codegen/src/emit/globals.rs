@@ -28,6 +28,7 @@ fn emit_global_object(param: &Parameter) -> TokenStream {
 
     quote! {
         #[doc = #doc]
+        #[must_use]
         pub fn #name() -> &'static #ty {
             unreachable!("transpiled to Lua global")
         }
@@ -42,6 +43,7 @@ fn emit_global_function(method: &Method) -> TokenStream {
 
     quote! {
         #[doc = #doc]
+        #[must_use]
         pub fn #name(#(#params),*) -> #ret {
             unreachable!("transpiled to Lua global")
         }
@@ -51,17 +53,21 @@ fn emit_global_function(method: &Method) -> TokenStream {
 fn emit_builtin_globals() -> TokenStream {
     quote! {
         /// The serpent serialisation library, available as a global
+        #[allow(clippy::all, dead_code)]
         pub mod serpent {
             use crate::support::*;
 
+            #[must_use]
             pub fn block(value: LuaAnyValue) -> String {
                 unreachable!("transpiled to Lua: serpent.block(...)")
             }
 
+            #[must_use]
             pub fn line(value: LuaAnyValue) -> String {
                 unreachable!("transpiled to Lua: serpent.line(...)")
             }
 
+            #[must_use]
             pub fn dump(value: LuaAnyValue) -> String {
                 unreachable!("transpiled to Lua: serpent.dump(...)")
             }

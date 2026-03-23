@@ -243,7 +243,7 @@ fn emit_impl_method(method: &Method) -> TokenStream {
     let name = format_ident!("{}", sanitize_ident(&method.basic_member.name));
     let params = emit_method_params(method);
     let ret = emit_return_type(&method.return_values);
-    let lua = format!("{}()", method.basic_member.name);
+    let lua = format!("`{}()`", method.basic_member.name);
 
     quote! {
         #[doc = #lua]
@@ -373,7 +373,7 @@ fn emit_method_params(method: &Method) -> Vec<TokenStream> {
     if method
         .variant_parameter_groups
         .as_ref()
-        .map_or(false, |g| !g.is_empty())
+        .is_some_and(|g| !g.is_empty())
     {
         params.push(quote! { extra: Option<LuaTable> });
     }
