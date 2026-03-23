@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["assembler", "library/assembler-core","library/assembler-codegen", "library/assembler-schema"]
+members = ["assembler", "library/assembler-schema"]
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
@@ -11,8 +11,6 @@ doc_markdown = "allow"
 
 [workspace.dependencies]
 assembler-schema = { path = "./library/assembler-schema" }
-assembler-codegen = { path = "./library/assembler-codegen" }
-assembler-core = { path = "./library/assembler-core" }
 
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"

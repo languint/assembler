@@ -1,9 +1,9 @@
 pub mod concept;
-pub mod event_raised;
-pub mod method;
-pub mod root;
-pub mod class;
-pub mod event;
-pub mod types;
-pub mod operator;
 pub mod attribute;
+pub mod event;
+pub mod method;
+pub mod operator;
+pub mod root;
+pub mod types;
+pub mod class;
+pub mod event_raised;
