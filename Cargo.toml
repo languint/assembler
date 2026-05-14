@@ -1,8 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["lib/assembler-types"]
+members = ["lib/assembler-types", "assembler/src-tauri"]
 
 [workspace.dependencies]
+assembler_types = { path = "lib/assembler-types" }
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
