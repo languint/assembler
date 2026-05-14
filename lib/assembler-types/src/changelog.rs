@@ -326,13 +326,13 @@ mod tests {
 
     #[test]
     pub fn parse_custom_category() {
-        let text = r#"
+        let text = r"
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 01. 01. 2025
   My Custom Category:
     - Hello world
-"#;
+";
 
         let parsed = ChangelogParser::parse(text).unwrap();
 
