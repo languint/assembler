@@ -87,12 +87,11 @@ pub struct ModDependency {
     pub version: Option<ModVersion>,
 }
 
-impl ToString for ModDependency {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for ModDependency {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut out = String::new();
 
         if let Some(prefix) = &self.prefix {
-            dbg!(prefix.to_string());
             out.push_str(&prefix.to_string());
             out.push(' ');
         }
@@ -100,20 +99,16 @@ impl ToString for ModDependency {
         out.push_str(&self.name);
 
         if let Some(op) = &self.equality_operator {
-            dbg!(op.to_string());
             out.push(' ');
             out.push_str(&op.to_string());
             out.push(' ');
         }
 
         if let Some(version) = &self.version {
-            dbg!(version.to_string());
             out.push_str(&version.to_string());
         }
 
-        dbg!(&out);
-
-        out
+        write!(f, "{out}")
     }
 }
 
