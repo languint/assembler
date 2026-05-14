@@ -1,0 +1,49 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        task: [clippy, test, build]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: clippy, rustfmt
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: monorepo
+
+      - name: Check formatting
+        if: matrix.task == 'clippy'
+        run: cargo fmt --all -- --check
+
+      - name: Run clippy
+        if: matrix.task == 'clippy'
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        if: matrix.task == 'test'
+        run: cargo test --workspace --all-features --verbose
+
+      - name: Build
+        if: matrix.task == 'build'
+        run: cargo build --workspace --all-features --verbose
